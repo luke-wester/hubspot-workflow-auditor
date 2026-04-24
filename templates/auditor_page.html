@@ -71,6 +71,34 @@
             padding: 24px;
         }
 
+        .instructions {
+            margin-bottom: 24px;
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid var(--line);
+            background: rgba(255, 255, 255, 0.6);
+        }
+
+        .instructions h2 {
+            margin-top: 0;
+            margin-bottom: 12px;
+        }
+
+        .instructions ol,
+        .instructions ul {
+            margin: 0;
+            padding-left: 20px;
+            color: var(--muted);
+        }
+
+        .instructions li + li {
+            margin-top: 8px;
+        }
+
+        .instructions code {
+            color: var(--ink);
+        }
+
         form {
             display: grid;
             gap: 14px;
@@ -142,6 +170,34 @@
         </section>
 
         <section class="panel">
+            <section class="instructions">
+                <h2>How to get your HubSpot token</h2>
+                <ol>
+                    <li>Log into the HubSpot account you want to audit.</li>
+                    <li>Go to <code>Settings</code>.</li>
+                    <li>Open <code>Integrations</code> -> <code>Private Apps</code>, or <code>Development</code> -> <code>Legacy apps</code> if that is what your account shows.</li>
+                    <li>Create a new private app, or open an existing one.</li>
+                    <li>In the app’s auth/scopes section, enable the scopes listed below.</li>
+                    <li>Copy the private app access token. It will start with <code>pat-</code>.</li>
+                    <li>Paste the token into this page and run the audit.</li>
+                </ol>
+
+                <h2>Required scopes</h2>
+                {% if "Workflow" in page_title %}
+                    <ul>
+                        <li><code>automation</code></li>
+                        <li><code>crm.schemas.contacts.read</code></li>
+                        <li><code>crm.schemas.companies.read</code></li>
+                        <li><code>crm.schemas.deals.read</code></li>
+                        <li><code>crm.schemas.tickets.read</code></li>
+                    </ul>
+                {% else %}
+                    <ul>
+                        <li><code>crm.lists.read</code></li>
+                    </ul>
+                {% endif %}
+            </section>
+
             {% if error %}
                 <div class="error">{{ error }}</div>
             {% endif %}
