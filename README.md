@@ -2,17 +2,13 @@
 
 ## Local web app
 
-This project now supports a small Flask UI with two browser-based auditors:
-
-- `/lists` for a HubSpot lists and segments audit
-- `/workflows` for a HubSpot workflow audit
+This project now supports a browser-based HubSpot workflow auditor.
 
 1. Create and activate a virtual environment.
 2. Install dependencies with `pip install -r requirements.txt`.
 3. Start the server with `python app.py`.
 4. Open `http://127.0.0.1:5000`.
-5. Open either `/lists` or `/workflows`.
-6. Paste a HubSpot private app token into the form.
+5. Paste a HubSpot private app token into the form.
 
 The safer pattern is:
 
@@ -22,19 +18,13 @@ The safer pattern is:
 
 Do not put the HubSpot token into browser-side JavaScript.
 
-## Lists audit CLI
+## Workflow requirements
 
-To run the new lists/segments audit directly:
+Users should create a HubSpot private app token with:
 
-```bash
-python run_list_audit.py
-```
+- `automation`
 
-It writes:
-
-- `out/list_report.html`
-- `out/lists_inventory.csv`
-- `out/list_filter_properties.csv`
+The audited HubSpot account must also have workflow access in its subscription.
 
 ## Share it on the web
 

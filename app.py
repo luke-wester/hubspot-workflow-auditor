@@ -2,14 +2,12 @@ import os
 import json
 
 import requests
-from flask import Flask, render_template, request
+from flask import Flask, redirect, render_template, request, url_for
 from jinja2 import TemplateNotFound
 
 from env_utils import load_dotenv
 from run_audit import render_html_report as render_workflow_report
 from run_audit import run_audit as run_workflow_audit
-from run_list_audit import render_html_report as render_list_report
-from run_list_audit import run_list_audit
 
 load_dotenv()
 
@@ -62,37 +60,22 @@ def summarize_hubspot_error(exc: requests.HTTPError) -> str:
     return f"HubSpot returned an API error: HTTP {status_code}.{details}"
 
 
-def run_page_audit(audit_type: str, token: str) -> dict:
-    if audit_type == "lists":
-        audit = run_list_audit(token)
-        report_html = render_list_report(
-            audit["summary"],
-            audit["inventory"],
-            audit["filter_rows"],
-            audit["property_usage"],
-            audit["findings"],
-        )
-        count = len(audit["inventory"])
-        count_label = "lists"
-    else:
-        audit = run_workflow_audit(token)
-        report_html = render_workflow_report(
-            audit["workflows"],
-            audit["touches"],
-            audit["collisions"],
-            audit["suggestions"],
-        )
-        count = len(audit["workflows"])
-        count_label = "workflows"
-
+def run_workflow_page_audit(token: str) -> dict:
+    audit = run_workflow_audit(token)
+    report_html = render_workflow_report(
+        audit["workflows"],
+        audit["touches"],
+        audit["collisions"],
+        audit["suggestions"],
+    )
     return {
         "report_html": report_html,
-        "count": count,
-        "count_label": count_label,
+        "count": len(audit["workflows"]),
+        "count_label": "workflows",
     }
 
 
-def render_auditor_page(template_name: str, audit_type: str, page_title: str, page_description: str):
+def render_workflow_page():
     report_html = None
     error = None
     masked_token = None
@@ -106,7 +89,7 @@ def render_auditor_page(template_name: str, audit_type: str, page_title: str, pa
             error = "Paste a HubSpot private app access token to run the audit."
         else:
             try:
-                result = run_page_audit(audit_type, token)
+                result = run_workflow_page_audit(token)
                 report_html = result["report_html"]
                 masked_token = mask_token(token)
                 result_count = result["count"]
@@ -121,9 +104,7 @@ def render_auditor_page(template_name: str, audit_type: str, page_title: str, pa
                 error = f"Unexpected error while running the audit: {exc.__class__.__name__}."
 
     return render_template(
-        template_name,
-        page_title=page_title,
-        page_description=page_description,
+        "index.html",
         report_html=report_html,
         error=error,
         masked_token=masked_token,
@@ -132,29 +113,16 @@ def render_auditor_page(template_name: str, audit_type: str, page_title: str, pa
     )
 
 
-@app.route("/", methods=["GET"])
+@app.route("/", methods=["GET", "POST"])
 def index():
-    return render_template("index.html")
-
-
-@app.route("/lists", methods=["GET", "POST"])
-def lists():
-    return render_auditor_page(
-        "auditor_page.html",
-        "lists",
-        "HubSpot Lists Auditor",
-        "Paste a HubSpot private app access token and review a lists and segments audit.",
-    )
+    return render_workflow_page()
 
 
 @app.route("/workflows", methods=["GET", "POST"])
 def workflows():
-    return render_auditor_page(
-        "auditor_page.html",
-        "workflows",
-        "HubSpot Workflow Auditor",
-        "Paste a HubSpot private app access token and review a workflow audit.",
-    )
+    if request.method == "POST":
+        return render_workflow_page()
+    return redirect(url_for("index"))
 
 
 if __name__ == "__main__":

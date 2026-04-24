@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>HubSpot Auditors</title>
+    <title>HubSpot Workflow Auditor</title>
     <style>
         :root {
             --bg: #f4efe8;
@@ -13,6 +13,8 @@
             --line: #d6c8b5;
             --accent: #c45c2d;
             --accent-dark: #9f451e;
+            --error-bg: #fce4df;
+            --error-ink: #7d2318;
             --shadow: rgba(53, 38, 21, 0.12);
         }
 
@@ -34,7 +36,8 @@
         }
 
         .hero,
-        .grid-card {
+        .instructions,
+        .panel {
             background: var(--panel);
             border: 1px solid var(--line);
             border-radius: 20px;
@@ -57,19 +60,9 @@
             line-height: 1.6;
         }
 
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-        }
-
         .instructions {
             margin-bottom: 24px;
             padding: 24px;
-            border-radius: 20px;
-            border: 1px solid var(--line);
-            background: var(--panel);
-            box-shadow: 0 20px 60px var(--shadow);
         }
 
         .instructions h2 {
@@ -88,37 +81,74 @@
             margin-top: 8px;
         }
 
-        .grid-card {
+        .panel {
             padding: 24px;
         }
 
-        .grid-card h2 {
-            margin-top: 0;
-            margin-bottom: 10px;
+        form {
+            display: grid;
+            gap: 14px;
         }
 
-        .button {
-            display: inline-block;
-            margin-top: 12px;
+        label {
+            font-weight: 700;
+        }
+
+        input[type="password"] {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 14px;
+            border: 1px solid var(--line);
+            background: #fff;
+            font: inherit;
+        }
+
+        button {
+            width: fit-content;
             padding: 12px 18px;
+            border: 0;
             border-radius: 999px;
-            text-decoration: none;
             background: var(--accent);
             color: #fff;
+            font: inherit;
+            cursor: pointer;
         }
 
-        .button:hover {
+        button:hover {
             background: var(--accent-dark);
+        }
+
+        .helper,
+        .meta {
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .error {
+            margin-bottom: 16px;
+            padding: 14px 16px;
+            border-radius: 14px;
+            background: var(--error-bg);
+            color: var(--error-ink);
+        }
+
+        .report-frame {
+            margin-top: 16px;
+            padding: 8px;
+            border-radius: 20px;
+            border: 1px solid var(--line);
+            background: rgba(255, 255, 255, 0.74);
+            overflow-x: auto;
         }
     </style>
 </head>
 <body>
     <main>
         <section class="hero">
-            <h1>HubSpot Auditors</h1>
+            <h1>HubSpot Workflow Auditor</h1>
             <p>
-                Choose an audit, paste your own HubSpot private app access token on the next page,
-                and review the results directly in the browser.
+                Paste a HubSpot private app access token and review workflow inventory, collisions,
+                property touches, and workflow suggestions directly in the browser.
             </p>
         </section>
 
@@ -128,42 +158,53 @@
                 <li>Log into the HubSpot account you want to audit.</li>
                 <li>Go to <code>Settings</code>.</li>
                 <li>Open <code>Integrations</code> -> <code>Private Apps</code>, or <code>Development</code> -> <code>Legacy apps</code> if that is what your account shows.</li>
-                <li>Create a new private app, or open an existing one.</li>
-                <li>Enable the scopes below on one private app. The same token can be used for both the lists auditor and the workflow auditor.</li>
+                <li>Create one private app for this workflow auditor.</li>
+                <li>Enable the <code>automation</code> scope.</li>
                 <li>Copy the private app access token. It will start with <code>pat-</code>.</li>
-                <li>Open either the lists or workflow auditor and paste the token into the page.</li>
+                <li>Paste the token below and run the audit.</li>
             </ol>
 
-            <h2>Required scopes</h2>
+            <h2>Required scope</h2>
             <ul>
-                <li>Use one private app with: <code>crm.lists.read</code> and <code>automation</code></li>
+                <li><code>automation</code></li>
             </ul>
 
             <h2>Subscription note</h2>
             <ul>
-                <li>The lists auditor can use that token directly.</li>
-                <li>The workflow auditor uses the same token, but the HubSpot account must also have workflow access in its subscription. Some accounts may still get a HubSpot permission or subscription error on the workflow page.</li>
+                <li>The HubSpot account must have workflow access in its subscription.</li>
+                <li>Some accounts may still return a HubSpot permission or subscription error even with the right token and scope.</li>
             </ul>
         </section>
 
-        <section class="grid">
-            <article class="grid-card">
-                <h2>Lists Auditor</h2>
-                <p>
-                    Review HubSpot lists and segments, including inventory, stale lists, duplicate names,
-                    and reused filter properties.
-                </p>
-                <a class="button" href="/lists">Open lists auditor</a>
-            </article>
+        <section class="panel">
+            {% if error %}
+                <div class="error">{{ error }}</div>
+            {% endif %}
 
-            <article class="grid-card">
-                <h2>Workflow Auditor</h2>
-                <p>
-                    Review HubSpot workflows, property touches, collisions, and workflow suggestions.
-                    If a portal does not support the workflows API, the page will show the HubSpot error.
+            <form method="post">
+                <label for="hubspot_token">HubSpot private app access token</label>
+                <input
+                    id="hubspot_token"
+                    name="hubspot_token"
+                    type="password"
+                    autocomplete="off"
+                    spellcheck="false"
+                    placeholder="pat-..."
+                />
+                <div class="helper">
+                    Each visitor should paste their own token. The backend uses the submitted token only for the current request to HubSpot.
+                </div>
+                <button type="submit">Run workflow audit</button>
+            </form>
+
+            {% if report_html %}
+                <p class="meta">
+                    Audit complete for token {{ masked_token }}. Loaded {{ result_count }} {{ count_label }}.
                 </p>
-                <a class="button" href="/workflows">Open workflow auditor</a>
-            </article>
+                <div class="report-frame">
+                    {{ report_html | safe }}
+                </div>
+            {% endif %}
         </section>
     </main>
 </body>
