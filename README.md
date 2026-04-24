@@ -2,14 +2,17 @@
 
 ## Local web app
 
-This project now supports a small Flask UI for running a HubSpot lists and segments audit in a browser.
+This project now supports a small Flask UI with two browser-based auditors:
+
+- `/lists` for a HubSpot lists and segments audit
+- `/workflows` for a HubSpot workflow audit
 
 1. Create and activate a virtual environment.
 2. Install dependencies with `pip install -r requirements.txt`.
-3. Copy `.env.example` to `.env` and set `HUBSPOT_TOKEN`.
-4. Start the server with `python app.py`.
-5. Open `http://127.0.0.1:5000`.
-6. Paste a HubSpot private app token into the form, or leave it blank to use the token from `.env`.
+3. Start the server with `python app.py`.
+4. Open `http://127.0.0.1:5000`.
+5. Open either `/lists` or `/workflows`.
+6. Paste a HubSpot private app token into the form.
 
 The safer pattern is:
 
@@ -41,8 +44,7 @@ The simplest path for this app is to deploy it as a Flask web service on Render.
 
 1. Push this project to a GitHub repo.
 2. Create a new Render Web Service from that repo.
-3. Set the environment variable `HUBSPOT_TOKEN` in Render.
-4. Deploy and share the generated `onrender.com` URL.
+3. Deploy and share the generated `onrender.com` URL.
 
 ### Render settings
 
@@ -53,7 +55,5 @@ This repo also includes `render.yaml`, so Render can pick up the service config 
 
 ### Important security note
 
-If you deploy this for other people to use, do not share your personal HubSpot private app token with all users through a single public site unless that is intentional. A safer next step is:
-
-- each user pastes their own private app token into the form, or
-- add login/auth before exposing a shared account token behind the app
+This hosted app is designed so each user pastes their own HubSpot private app token into the form.
+Do not configure a shared production token for all users unless that is intentional.

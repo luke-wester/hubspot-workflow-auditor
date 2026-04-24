@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ page_title }}</title>
+    <style>
+        :root {
+            --bg: #f4efe8;
+            --panel: rgba(255, 251, 245, 0.92);
+            --ink: #1f2a35;
+            --muted: #5d6a78;
+            --line: #d6c8b5;
+            --accent: #c45c2d;
+            --accent-dark: #9f451e;
+            --error-bg: #fce4df;
+            --error-ink: #7d2318;
+            --shadow: rgba(53, 38, 21, 0.12);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            color: var(--ink);
+            font-family: Georgia, "Times New Roman", serif;
+            background:
+                radial-gradient(circle at top left, rgba(196, 92, 45, 0.18), transparent 24rem),
+                linear-gradient(180deg, #fbf6f1 0%, var(--bg) 100%);
+        }
+
+        main {
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 40px 20px 64px;
+        }
+
+        .hero,
+        .panel {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px var(--shadow);
+        }
+
+        .hero {
+            padding: 32px;
+            margin-bottom: 24px;
+        }
+
+        .hero h1 {
+            margin: 0 0 12px;
+            font-size: clamp(2.4rem, 5vw, 4.8rem);
+            line-height: 0.95;
+        }
+
+        .hero p,
+        .helper,
+        .meta,
+        .nav {
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .nav a {
+            color: inherit;
+            margin-right: 16px;
+        }
+
+        .panel {
+            padding: 24px;
+        }
+
+        form {
+            display: grid;
+            gap: 14px;
+        }
+
+        label {
+            font-weight: 700;
+        }
+
+        input[type="password"] {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 14px;
+            border: 1px solid var(--line);
+            background: #fff;
+            font: inherit;
+        }
+
+        button {
+            width: fit-content;
+            padding: 12px 18px;
+            border: 0;
+            border-radius: 999px;
+            background: var(--accent);
+            color: #fff;
+            font: inherit;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: var(--accent-dark);
+        }
+
+        .error {
+            margin-bottom: 16px;
+            padding: 14px 16px;
+            border-radius: 14px;
+            background: var(--error-bg);
+            color: var(--error-ink);
+        }
+
+        .result-shell {
+            margin-top: 24px;
+        }
+
+        .meta {
+            margin-bottom: 16px;
+        }
+
+        .report-frame {
+            padding: 8px;
+            border-radius: 20px;
+            border: 1px solid var(--line);
+            background: rgba(255, 255, 255, 0.74);
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <section class="hero">
+            <div class="nav">
+                <a href="/">Home</a>
+                <a href="/lists">Lists Auditor</a>
+                <a href="/workflows">Workflow Auditor</a>
+            </div>
+            <h1>{{ page_title }}</h1>
+            <p>{{ page_description }}</p>
+        </section>
+
+        <section class="panel">
+            {% if error %}
+                <div class="error">{{ error }}</div>
+            {% endif %}
+
+            <form method="post">
+                <label for="hubspot_token">HubSpot private app access token</label>
+                <input
+                    id="hubspot_token"
+                    name="hubspot_token"
+                    type="password"
+                    autocomplete="off"
+                    spellcheck="false"
+                    placeholder="pat-..."
+                />
+                <div class="helper">
+                    This page requires each visitor to paste their own token. The backend uses the submitted
+                    token only for the current request to HubSpot.
+                </div>
+                <button type="submit">Run audit</button>
+            </form>
+
+            {% if report_html %}
+                <section class="result-shell">
+                    <p class="meta">
+                        Audit complete for token {{ masked_token }}. Loaded {{ result_count }} {{ count_label }}.
+                    </p>
+                    <div class="report-frame">
+                        {{ report_html | safe }}
+                    </div>
+                </section>
+            {% endif %}
+        </section>
+    </main>
+</body>
+</html>
