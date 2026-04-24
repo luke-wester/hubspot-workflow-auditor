@@ -23,6 +23,11 @@ Do not put the HubSpot token into browser-side JavaScript.
 Users should create a HubSpot private app token with:
 
 - `automation`
+- `crm.schemas.contacts.read`
+- `crm.schemas.companies.read`
+- `crm.schemas.deals.read`
+- `crm.schemas.tickets.read`
+- `crm.lists.read`
 
 The audited HubSpot account must also have workflow access in its subscription.
 
