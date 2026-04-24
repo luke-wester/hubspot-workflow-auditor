@@ -66,8 +66,12 @@
         }
 
         .instructions h2 {
-            margin-top: 0;
+            margin-top: 28px;
             margin-bottom: 12px;
+        }
+
+        .instructions h2:first-child {
+            margin-top: 0;
         }
 
         .instructions ol,
@@ -152,30 +156,6 @@
             </p>
         </section>
 
-        <section class="instructions">
-            <h2>How to get your HubSpot token</h2>
-            <ol>
-                <li>Log into the HubSpot account you want to audit.</li>
-                <li>Go to <code>Settings</code>.</li>
-                <li>Open <code>Integrations</code> -> <code>Private Apps</code>, or <code>Development</code> -> <code>Legacy apps</code> if that is what your account shows.</li>
-                <li>Create one private app for this workflow auditor.</li>
-                <li>Enable the workflow-related read/view scopes listed below.</li>
-                <li>Copy the private app access token. It will start with <code>pat-</code>.</li>
-                <li>Paste the token below and run the audit.</li>
-            </ol>
-
-            <h2>Required scopes</h2>
-            <ul>
-                <li><code>automation</code></li>
-                <li><code>crm.schemas.contacts.read</code></li>
-                <li><code>crm.schemas.companies.read</code></li>
-                <li><code>crm.schemas.deals.read</code></li>
-                <li><code>crm.schemas.tickets.read</code></li>
-                <li><code>crm.lists.read</code></li>
-            </ul>
-
-        </section>
-
         <section class="panel">
             {% if error %}
                 <div class="error">{{ error }}</div>
@@ -205,6 +185,29 @@
                     {{ report_html | safe }}
                 </div>
             {% endif %}
+        </section>
+
+        <section class="instructions">
+            <h2>How to get your HubSpot token</h2>
+            <ol>
+                <li>Log into the HubSpot account you want to audit.</li>
+                <li>Go to <code>Settings</code>.</li>
+                <li>Open <code>Integrations</code> -> <code>Private Apps</code>, or <code>Development</code> -> <code>Legacy apps</code> if that is what your account shows.</li>
+                <li>Create one private app for this workflow auditor.</li>
+                <li>Enable the workflow-related read/view scopes listed below.</li>
+                <li>Copy the private app access token. It will start with <code>pat-</code>.</li>
+                <li>Paste the token above and run the audit.</li>
+            </ol>
+
+            <h2>Required scopes</h2>
+            <ul>
+                <li><code>automation</code></li>
+                <li><code>crm.schemas.contacts.read</code></li>
+                <li><code>crm.schemas.companies.read</code></li>
+                <li><code>crm.schemas.deals.read</code></li>
+                <li><code>crm.schemas.tickets.read</code></li>
+                <li><code>crm.lists.read</code></li>
+            </ul>
         </section>
     </main>
 </body>
