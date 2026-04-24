@@ -29,8 +29,6 @@ Users should create a HubSpot private app token with:
 - `crm.schemas.tickets.read`
 - `crm.lists.read`
 
-The audited HubSpot account must also have workflow access in its subscription.
-
 ## Share it on the web
 
 The simplest path for this app is to deploy it as a Flask web service on Render.
