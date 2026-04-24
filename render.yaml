@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: hubspot-mini-starter
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: HUBSPOT_TOKEN
+        sync: false
